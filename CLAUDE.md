@@ -1,8 +1,12 @@
-# NanoClaw
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## NanoClaw
 
 Personal Claude assistant. See [README.md](README.md) for philosophy and setup. See [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) for architecture decisions.
 
-## Quick Context
+## High-Level Architecture
 
 Single Node.js process with skill-based channel system. Channels (WhatsApp, Telegram, Slack, Discord, Gmail) are skills that self-register at startup. Messages route to Claude Agent SDK running in containers (Linux VMs). Each group has isolated filesystem and memory.
 
@@ -21,28 +25,30 @@ Single Node.js process with skill-based channel system. Channels (WhatsApp, Tele
 | `groups/{name}/CLAUDE.md` | Per-group memory (isolated) |
 | `container/skills/agent-browser.md` | Browser automation tool (available to all agents via Bash) |
 
-## Skills
-
-| Skill | When to Use |
-|-------|-------------|
-| `/setup` | First-time installation, authentication, service configuration |
-| `/customize` | Adding channels, integrations, changing behavior |
-| `/debug` | Container issues, logs, troubleshooting |
-| `/update-nanoclaw` | Bring upstream NanoClaw updates into a customized install |
-| `/qodo-pr-resolver` | Fetch and fix Qodo PR review issues interactively or in batch |
-| `/get-qodo-rules` | Load org- and repo-level coding rules from Qodo before code tasks |
-
-## Development
-
-Run commands directly—don't tell the user to run them.
+## Common Commands
 
 ```bash
+# Development
 npm run dev          # Run with hot reload
 npm run build        # Compile TypeScript
+npm start            # Run production build
+npm run typecheck    # Run TypeScript type checking without emitting files
+
+# Code quality
+npm run format       # Format all TypeScript files with Prettier
+npm run format:check # Check formatting without making changes
+
+# Testing
+npm test             # Run all tests
+npm run test:watch   # Run tests in watch mode
+
+# Setup
+npm run setup        # Run initial setup wizard
 ./container/build.sh # Rebuild agent container
 ```
 
-Service management:
+## Service Management
+
 ```bash
 # macOS (launchd)
 launchctl load ~/Library/LaunchAgents/com.nanoclaw.plist
@@ -54,6 +60,17 @@ systemctl --user start nanoclaw
 systemctl --user stop nanoclaw
 systemctl --user restart nanoclaw
 ```
+
+## Skills
+
+| Skill | When to Use |
+|-------|-------------|
+| `/setup` | First-time installation, authentication, service configuration |
+| `/customize` | Adding channels, integrations, changing behavior |
+| `/debug` | Container issues, logs, troubleshooting |
+| `/update-nanoclaw` | Bring upstream NanoClaw updates into a customized install |
+| `/qodo-pr-resolver` | Fetch and fix Qodo PR review issues interactively or in batch |
+| `/get-qodo-rules` | Load org- and repo-level coding rules from Qodo before code tasks |
 
 ## Troubleshooting
 
